@@ -1,0 +1,36 @@
+version: '3'
+services:
+ app:
+   build: ./docker/app
+   container_name: makaizou_library_management_app
+   volumes:
+     - ./src:/var/www/html
+   ports:
+    - "8001:80"
+   extra_hosts:
+    - "makaizou_library_management_app.local:127.0.0.1"
+    - "admin.makaizou_library_management_app.local:127.0.0.1"
+   environment:
+     VIRTUAL_HOST: makaizou_library_management_app.local
+   networks:
+    - default
+ db:
+   image: mysql:8.0
+   container_name: makaizou_library_management_app-mysql
+   environment:
+     MYSQL_ROOT_PASSWORD: root
+     MYSQL_DATABASE: mysql
+     MYSQL_USER: admin
+     MYSQL_PASSWORD: admin
+     TZ: 'Asia/Tokyo'
+   command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+   volumes:
+     - ./docker/db/data:/var/lib/mysql
+     - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
+   ports:
+     - 3307:3306
+   networks:
+    - default
+
+networks: 
+ default:
